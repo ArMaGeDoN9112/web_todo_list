@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Aufgabenliste",
+    "description": "Eine einfache und elegante Aufgabenlisten-Anwendung"
+  },
+  "nav": {
+    "myTodos": "Meine Aufgaben",
+    "profile": "Profil",
+    "logout": "Abmelden"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "username": "Benutzername",
+    "hasAccount": "Haben Sie bereits ein Konto?",
+    "noAccount": "Noch kein Konto?",
+    "loginError": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.",
+    "registerError": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "passwordMismatch": "Passwörter stimmen nicht überein"
+  },
+  "todos": {
+    "addTodo": "Aufgabe hinzufügen",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "add": "Hinzufügen",
+    "noTodos": "Keine Aufgaben vorhanden",
+    "addFirst": "Fügen Sie Ihre erste Aufgabe hinzu!",
+    "titleRequired": "Bitte geben Sie einen Titel ein",
+    "addError": "Aufgabe konnte nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+    "toggleError": "Status konnte nicht geändert werden. Bitte versuchen Sie es erneut.",
+    "deleteError": "Aufgabe konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "fetchError": "Aufgaben konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "complete": "Abschließen",
+    "delete": "Löschen",
+    "todoPlaceholder": "Was muss erledigt werden?",
+    "descriptionPlaceholder": "Beschreibung hinzufügen (optional)"
+  },
+  "profile": {
+    "title": "Profil",
+    "username": "Benutzername",
+    "email": "E-Mail",
+    "stats": {
+      "title": "Ihre Statistiken",
+      "total": "Gesamt Aufgaben",
+      "completed": "Abgeschlossen",
+      "pending": "Ausstehend"
+    },
+    "actions": {
+      "changePassword": "Passwort ändern",
+      "deleteAccount": "Konto löschen"
+    }
+  }
+} 

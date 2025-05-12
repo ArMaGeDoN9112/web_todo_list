@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Create your Todo List account" />
+    <title data-i18n="auth.register">Register - Todo List</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+  </head>
+  <body>
+    <div class="app-container">
+      <nav class="navbar">
+        <div class="nav-brand">
+          <i class="fas fa-check-double"></i>
+          <h1 data-i18n="app.title">Todo List</h1>
+        </div>
+        <div class="nav-actions">
+          <!-- Language switcher will be inserted here -->
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <div class="auth-container">
+          <div class="auth-card">
+            <div class="auth-header">
+              <h2 data-i18n="auth.register">Register</h2>
+              <p class="auth-subtitle" data-i18n="auth.noAccount">
+                Don't have an account?
+              </p>
+            </div>
+
+            <div id="error-message" class="error-message hidden"></div>
+
+            <form id="register-form" class="auth-form">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-user"></i>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Choose a username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="input-with-icon">
+                <i class="fas fa-envelope"></i>
+                <input
+                  type="email"
+                  id="email"
+                  data-i18n-placeholder="auth.email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+
+              <div class="input-with-icon">
+                <i class="fas fa-lock"></i>
+                <input
+                  type="password"
+                  id="password"
+                  data-i18n-placeholder="auth.password"
+                  placeholder="Password"
+                  required
+                />
+              </div>
+
+              <div class="input-with-icon">
+                <i class="fas fa-lock"></i>
+                <input
+                  type="password"
+                  id="confirm-password"
+                  data-i18n-placeholder="auth.confirmPassword"
+                  placeholder="Confirm Password"
+                  required
+                />
+              </div>
+
+              <button type="submit" class="auth-button">
+                <i class="fas fa-user-plus"></i>
+                <span data-i18n="auth.signUp">Sign Up</span>
+              </button>
+            </form>
+
+            <div class="auth-footer">
+              <p data-i18n="auth.hasAccount">Already have an account?</p>
+              <a href="/login" class="auth-link" data-i18n="auth.signIn"
+                >Sign In</a
+              >
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/i18n.js"></script>
+    <script src="/static/theme.js"></script>
+    <script src="/static/auth.js"></script>
+  </body>
+</html>

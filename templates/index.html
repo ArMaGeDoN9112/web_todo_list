@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A beautiful and modern todo list application"
+    />
+    <title data-i18n="app.title">Todo List</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+  </head>
+  <body>
+    <div class="app-container">
+      <nav class="navbar">
+        <div class="nav-brand">
+          <i class="fas fa-check-double"></i>
+          <h1 data-i18n="app.title">Todo List</h1>
+        </div>
+        <div class="nav-actions">
+          <a href="/profile" class="profile-link">
+            <i class="fas fa-user"></i>
+            <span data-i18n="nav.profile">Profile</span>
+          </a>
+          <button onclick="logout()" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span data-i18n="nav.logout">Logout</span>
+          </button>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <div id="error-message" class="error-message hidden"></div>
+
+        <div class="todo-input-container">
+          <form id="new-todo-form" class="todo-form">
+            <div class="form-group">
+              <input
+                type="text"
+                id="new-todo"
+                data-i18n-placeholder="todos.todoPlaceholder"
+                placeholder="What needs to be done?"
+                required
+                class="todo-input"
+              />
+            </div>
+            <div class="form-group">
+              <textarea
+                id="new-todo-description"
+                data-i18n-placeholder="todos.descriptionPlaceholder"
+                placeholder="Add a description (optional)"
+                class="todo-description"
+              ></textarea>
+            </div>
+            <button type="submit" class="add-todo-btn">
+              <i class="fas fa-plus"></i>
+              <span data-i18n="todos.addTodo">Add Todo</span>
+            </button>
+          </form>
+        </div>
+
+        <div class="todos-container">
+          <h2 class="todos-title" data-i18n="todos.title">Your Tasks</h2>
+          <div id="todos-list" class="todos-list">
+            <!-- Todos will be inserted here by JavaScript -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/i18n.js"></script>
+    <script src="/static/theme.js"></script>
+    <script src="/static/todos.js"></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "app": {
+    "title": "Todo List",
+    "description": "A simple and elegant todo list application"
+  },
+  "nav": {
+    "myTodos": "My Todos",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "username": "Username",
+    "hasAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "loginError": "Login failed. Please check your credentials.",
+    "registerError": "Registration failed. Please try again.",
+    "passwordMismatch": "Passwords do not match",
+    "usernameTooShort": "Username must be at least 3 characters long",
+    "passwordTooShort": "Password must be at least 6 characters long",
+    "networkError": "Network error. Please check your connection.",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "passwordRequirements": "Password must be at least 6 characters long"
+  },
+  "todos": {
+    "addTodo": "Add Todo",
+    "title": "Title",
+    "description": "Description",
+    "add": "Add",
+    "noTodos": "No todos yet",
+    "addFirst": "Add your first todo!",
+    "titleRequired": "Please enter a todo title",
+    "addError": "Failed to add todo. Please try again.",
+    "toggleError": "Failed to toggle todo. Please try again.",
+    "deleteError": "Failed to delete todo. Please try again.",
+    "fetchError": "Failed to fetch todos. Please try again.",
+    "complete": "Complete",
+    "delete": "Delete",
+    "todoPlaceholder": "What needs to be done?",
+    "descriptionPlaceholder": "Add a description (optional)"
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "email": "Email",
+    "stats": {
+      "title": "Your Stats",
+      "total": "Total Todos",
+      "completed": "Completed",
+      "pending": "Pending"
+    },
+    "actions": {
+      "changePassword": "Change Password",
+      "deleteAccount": "Delete Account"
+    }
+  }
+} 

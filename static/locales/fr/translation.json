@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Liste de Tâches",
+    "description": "Une application simple et élégante pour les listes de tâches"
+  },
+  "nav": {
+    "myTodos": "Mes Tâches",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "signIn": "Se Connecter",
+    "signUp": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "username": "Nom d'utilisateur",
+    "hasAccount": "Vous avez déjà un compte ?",
+    "noAccount": "Pas encore de compte ?",
+    "loginError": "Échec de la connexion. Veuillez vérifier vos identifiants.",
+    "registerError": "Échec de l'inscription. Veuillez réessayer.",
+    "passwordMismatch": "Les mots de passe ne correspondent pas"
+  },
+  "todos": {
+    "addTodo": "Ajouter une Tâche",
+    "title": "Titre",
+    "description": "Description",
+    "add": "Ajouter",
+    "noTodos": "Aucune tâche",
+    "addFirst": "Ajoutez votre première tâche !",
+    "titleRequired": "Veuillez entrer un titre",
+    "addError": "Échec de l'ajout de la tâche. Veuillez réessayer.",
+    "toggleError": "Échec du changement d'état. Veuillez réessayer.",
+    "deleteError": "Échec de la suppression. Veuillez réessayer.",
+    "fetchError": "Échec du chargement des tâches. Veuillez réessayer.",
+    "complete": "Terminer",
+    "delete": "Supprimer",
+    "todoPlaceholder": "Qu'est-ce qu'il faut faire ?",
+    "descriptionPlaceholder": "Ajouter une description (optionnel)"
+  },
+  "profile": {
+    "title": "Profil",
+    "username": "Nom d'utilisateur",
+    "email": "E-mail",
+    "stats": {
+      "title": "Vos Statistiques",
+      "total": "Total des Tâches",
+      "completed": "Terminées",
+      "pending": "En cours"
+    },
+    "actions": {
+      "changePassword": "Changer le mot de passe",
+      "deleteAccount": "Supprimer le compte"
+    }
+  }
+} 

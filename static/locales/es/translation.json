@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Lista de Tareas",
+    "description": "Una aplicación simple y elegante para listas de tareas"
+  },
+  "nav": {
+    "myTodos": "Mis Tareas",
+    "profile": "Perfil",
+    "logout": "Cerrar Sesión"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "username": "Nombre de Usuario",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "noAccount": "¿No tienes una cuenta?",
+    "loginError": "Error al iniciar sesión. Por favor, verifica tus credenciales.",
+    "registerError": "Error al registrarse. Por favor, inténtalo de nuevo.",
+    "passwordMismatch": "Las contraseñas no coinciden"
+  },
+  "todos": {
+    "addTodo": "Añadir Tarea",
+    "title": "Título",
+    "description": "Descripción",
+    "add": "Añadir",
+    "noTodos": "No hay tareas",
+    "addFirst": "¡Añade tu primera tarea!",
+    "titleRequired": "Por favor, introduce un título",
+    "addError": "Error al añadir la tarea. Por favor, inténtalo de nuevo.",
+    "toggleError": "Error al cambiar el estado. Por favor, inténtalo de nuevo.",
+    "deleteError": "Error al eliminar la tarea. Por favor, inténtalo de nuevo.",
+    "fetchError": "Error al cargar las tareas. Por favor, inténtalo de nuevo.",
+    "complete": "Completar",
+    "delete": "Eliminar",
+    "todoPlaceholder": "¿Qué hay que hacer?",
+    "descriptionPlaceholder": "Añadir una descripción (opcional)"
+  },
+  "profile": {
+    "title": "Perfil",
+    "username": "Nombre de Usuario",
+    "email": "Correo Electrónico",
+    "stats": {
+      "title": "Tus Estadísticas",
+      "total": "Total de Tareas",
+      "completed": "Completadas",
+      "pending": "Pendientes"
+    },
+    "actions": {
+      "changePassword": "Cambiar Contraseña",
+      "deleteAccount": "Eliminar Cuenta"
+    }
+  }
+} 
