@@ -30,17 +30,17 @@ func InitDB() error {
 	log.Printf("InitDB: Foreign key constraints enabled")
 
 	// Drop existing tables if they exist
-	_, err = db.Exec("DROP TABLE IF EXISTS todos")
-	if err != nil {
-		log.Printf("InitDB: Error dropping todos table: %v", err)
-		return err
-	}
-	_, err = db.Exec("DROP TABLE IF EXISTS users")
-	if err != nil {
-		log.Printf("InitDB: Error dropping users table: %v", err)
-		return err
-	}
-	log.Printf("InitDB: Existing tables dropped")
+	// _, err = db.Exec("DROP TABLE IF EXISTS todos")
+	// if err != nil {
+	// 	log.Printf("InitDB: Error dropping todos table: %v", err)
+	// 	return err
+	// }
+	// _, err = db.Exec("DROP TABLE IF EXISTS users")
+	// if err != nil {
+	// 	log.Printf("InitDB: Error dropping users table: %v", err)
+	// 	return err
+	// }
+	// log.Printf("InitDB: Existing tables dropped")
 
 	// Create users table
 	createUsersTable := `
