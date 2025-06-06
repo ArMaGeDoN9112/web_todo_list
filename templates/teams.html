@@ -1,36 +1,181 @@
-{{template "header" .}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Management</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    {{template "header" .}}
 
-<div class="app-container">
-  <main class="main-content">
-    <div id="error-message" class="error-message hidden"></div>
-
-    <div class="teams-container">
-      <div class="teams-header">
-        <h2 class="todos-title">Team Management</h2>
-        <div class="teams-actions">
-          <button class="btn btn-primary" onclick="showCreateTeamModal()">
+    <main class="container">
+      <div class="page-header">
+        <h1>Team Management</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="createTeamBtn" type="button">
             <i class="fas fa-plus"></i>
             <span>Create Team</span>
           </button>
-          <button class="btn btn-secondary" onclick="showJoinTeamModal()">
-            <i class="fas fa-user-plus"></i>
+          <button class="btn btn-secondary" id="joinTeamBtn" type="button">
+            <i class="fas fa-sign-in-alt"></i>
             <span>Join Team</span>
           </button>
         </div>
       </div>
 
-      <div class="teams-list" id="teamsList">
-        {{range .teams}}
+      <!-- Create Team Section -->
+      <section
+        id="createTeamSection"
+        class="team-section hidden"
+        style="display: none"
+      >
+        <div class="section-header">
+          <h2>Create New Team</h2>
+          <button
+            class="close-section-btn"
+            id="closeCreateTeamBtn"
+            type="button"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="createTeamForm" class="team-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="teamName">Team Name</label>
+            <div class="input-with-icon">
+              <i class="fas fa-users"></i>
+              <input
+                type="text"
+                id="teamName"
+                name="name"
+                required
+                minlength="3"
+                maxlength="50"
+                placeholder="Enter team name"
+              />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span>Create Team</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Join Team Section -->
+      <section id="joinTeamSection" class="team-section hidden">
+        <div class="section-header">
+          <h2>Join Existing Team</h2>
+          <button
+            class="close-section-btn"
+            onclick="toggleSection('joinTeamSection')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="joinTeamForm" class="team-form">
+          <div class="form-group">
+            <label for="teamCode">Team Code</label>
+            <div class="input-with-icon">
+              <i class="fas fa-key"></i>
+              <input
+                type="text"
+                id="teamCode"
+                name="code"
+                required
+                minlength="6"
+                maxlength="6"
+                placeholder="Enter team code"
+              />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Join Team</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Teams List -->
+      <section id="teamsList" class="teams-grid">
+        {{range .Teams}}
         <div class="team-card" data-team-id="{{.ID}}">
           <div class="team-info">
             <h3>{{.Name}}</h3>
             <p class="team-code">Team Code: {{.Code}}</p>
           </div>
+
+          <!-- Team Tasks Section -->
+          <div class="team-todos">
+            <div class="team-todos-header">
+              <h4>Team Tasks</h4>
+              <button
+                class="btn btn-sm btn-primary"
+                onclick="toggleTeamTodoForm({{.ID}})"
+              >
+                <i class="fas fa-plus"></i>
+                <span>Add Task</span>
+              </button>
+            </div>
+
+            <!-- Add Task Form -->
+            <div id="teamTodoForm-{{.ID}}" class="team-todo-form hidden">
+              <form
+                class="todo-form"
+                onsubmit="return createTeamTodo(event, {{.ID}})"
+              >
+                <div class="form-group">
+                  <div class="input-with-icon">
+                    <i class="fas fa-pencil-alt"></i>
+                    <input
+                      type="text"
+                      name="title"
+                      required
+                      minlength="3"
+                      maxlength="100"
+                      placeholder="What needs to be done?"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="input-with-icon">
+                    <i class="fas fa-align-left"></i>
+                    <textarea
+                      name="description"
+                      placeholder="Add a description (optional)"
+                      class="todo-description"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i>
+                    <span>Add</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm"
+                    onclick="toggleTeamTodoForm({{.ID}})"
+                  >
+                    <i class="fas fa-times"></i>
+                    <span>Cancel</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="team-todos-list" id="teamTodosList-{{.ID}}">
+              <!-- Team todos will be loaded here -->
+            </div>
+          </div>
+
           <div class="team-actions">
-            <button class="btn btn-primary" onclick="viewTeam({{.ID}})">
-              <i class="fas fa-eye"></i>
-              <span>View Team</span>
-            </button>
             <button class="btn btn-danger" onclick="deleteTeam({{.ID}})">
               <i class="fas fa-trash"></i>
               <span>Delete Team</span>
@@ -38,136 +183,13 @@
           </div>
         </div>
         {{end}}
-      </div>
-    </div>
-  </main>
-</div>
+      </section>
 
-<!-- Create Team Modal -->
-<div class="modal" id="createTeamModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Create New Team</h3>
-      <button class="close-btn" onclick="closeCreateTeamModal()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form id="createTeamForm" class="todo-form">
-        <div class="form-group">
-          <label for="teamName">Team Name</label>
-          <div class="input-with-icon">
-            <i class="fas fa-users"></i>
-            <input
-              type="text"
-              id="teamName"
-              name="teamName"
-              required
-              minlength="3"
-              maxlength="50"
-              placeholder="Enter team name"
-            />
-          </div>
-        </div>
-        <button type="submit" class="add-todo-btn">
-          <i class="fas fa-plus"></i>
-          <span>Create Team</span>
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
+      <!-- Error Message -->
+      <div id="error-message" class="error-message hidden"></div>
+    </main>
 
-<!-- Join Team Modal -->
-<div class="modal" id="joinTeamModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>Join Team</h3>
-      <button class="close-btn" onclick="closeJoinTeamModal()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form id="joinTeamForm" class="todo-form">
-        <div class="form-group">
-          <label for="teamCode">Team Code</label>
-          <div class="input-with-icon">
-            <i class="fas fa-key"></i>
-            <input
-              type="text"
-              id="teamCode"
-              name="teamCode"
-              required
-              minlength="6"
-              maxlength="6"
-              placeholder="Enter team code"
-            />
-          </div>
-        </div>
-        <button type="submit" class="add-todo-btn">
-          <i class="fas fa-user-plus"></i>
-          <span>Join Team</span>
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Team Todos Modal -->
-<div class="modal" id="teamTodosModal">
-  <div class="modal-content modal-lg">
-    <div class="modal-header">
-      <h3>Team Tasks</h3>
-      <button class="close-btn" onclick="closeTeamTodosModal()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form id="createTeamTodoForm" class="todo-form">
-        <div class="form-group">
-          <label for="todoTitle">Task Title</label>
-          <div class="input-with-icon">
-            <i class="fas fa-pencil-alt"></i>
-            <input
-              type="text"
-              id="todoTitle"
-              name="todoTitle"
-              required
-              minlength="3"
-              maxlength="100"
-              placeholder="What needs to be done?"
-            />
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="todoDescription">Description</label>
-          <div class="input-with-icon">
-            <i class="fas fa-align-left"></i>
-            <textarea
-              id="todoDescription"
-              name="todoDescription"
-              rows="3"
-              placeholder="Add a description (optional)"
-              class="todo-description"
-            ></textarea>
-          </div>
-        </div>
-        <button type="submit" class="add-todo-btn">
-          <i class="fas fa-plus"></i>
-          <span>Add Task</span>
-        </button>
-      </form>
-
-      <div class="todos-container">
-        <h2 class="todos-title">Team Tasks</h2>
-        <div class="todos-list" id="teamTodosList">
-          <!-- Team todos will be dynamically added here -->
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="/static/teams.js"></script>
-
-{{template "footer" .}}
+    {{template "footer" .}}
+    <script src="/static/teams.js"></script>
+  </body>
+</html>

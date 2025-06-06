@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to update todo');
+     
         }
     }
 

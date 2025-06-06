@@ -456,6 +456,8 @@ func JoinTeam(userID int64, code string) (models.Team, error) {
 }
 
 func GetUserTeams(userID int64) ([]models.Team, error) {
+	log.Printf("GetUserTeams: Getting teams for user %d", userID)
+
 	rows, err := db.Query(`
 		SELECT DISTINCT t.id, t.name, t.code, t.created_by, t.created_at, t.updated_at 
 		FROM teams t
@@ -465,6 +467,7 @@ func GetUserTeams(userID int64) ([]models.Team, error) {
 		userID, userID,
 	)
 	if err != nil {
+		log.Printf("GetUserTeams: Error querying teams for user %d: %v", userID, err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -474,15 +477,46 @@ func GetUserTeams(userID int64) ([]models.Team, error) {
 		var team models.Team
 		err := rows.Scan(&team.ID, &team.Name, &team.Code, &team.CreatedBy, &team.CreatedAt, &team.UpdatedAt)
 		if err != nil {
+			log.Printf("GetUserTeams: Error scanning team row for user %d: %v", userID, err)
 			return nil, err
 		}
+		log.Printf("GetUserTeams: Found team %d: %s (code: %s) for user %d", team.ID, team.Name, team.Code, userID)
 		teams = append(teams, team)
 	}
 
+	if err = rows.Err(); err != nil {
+		log.Printf("GetUserTeams: Error iterating teams for user %d: %v", userID, err)
+		return nil, err
+	}
+
+	log.Printf("GetUserTeams: Found %d teams for user %d", len(teams), userID)
 	return teams, nil
 }
 
 func GetTeamTodos(teamID int64) ([]models.TeamTodo, error) {
+	log.Printf("GetTeamTodos: Fetching todos for team ID: %d", teamID)
+
+	// First verify the team exists
+	var teamExists bool
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM teams WHERE id = ?)", teamID).Scan(&teamExists)
+	if err != nil {
+		log.Printf("GetTeamTodos: Error checking if team exists: %v", err)
+		return nil, err
+	}
+	if !teamExists {
+		log.Printf("GetTeamTodos: Team ID %d does not exist", teamID)
+		return []models.TeamTodo{}, nil
+	}
+
+	// Get the count of todos for this team
+	var teamTodosCount int
+	err = db.QueryRow("SELECT COUNT(*) FROM team_todos WHERE team_id = ?", teamID).Scan(&teamTodosCount)
+	if err != nil {
+		log.Printf("GetTeamTodos: Error getting team todos count: %v", err)
+	} else {
+		log.Printf("GetTeamTodos: Total todos for team %d: %d", teamID, teamTodosCount)
+	}
+
 	rows, err := db.Query(`
 		SELECT id, team_id, created_by, title, description, completed, created_at, updated_at 
 		FROM team_todos 
@@ -491,6 +525,7 @@ func GetTeamTodos(teamID int64) ([]models.TeamTodo, error) {
 		teamID,
 	)
 	if err != nil {
+		log.Printf("GetTeamTodos: Database error: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -500,11 +535,19 @@ func GetTeamTodos(teamID int64) ([]models.TeamTodo, error) {
 		var todo models.TeamTodo
 		err := rows.Scan(&todo.ID, &todo.TeamID, &todo.CreatedBy, &todo.Title, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
 		if err != nil {
+			log.Printf("GetTeamTodos: Error scanning row: %v", err)
 			return nil, err
 		}
+		log.Printf("GetTeamTodos: Found todo - ID: %d, TeamID: %d, Title: %s", todo.ID, todo.TeamID, todo.Title)
 		todos = append(todos, todo)
 	}
 
+	if err = rows.Err(); err != nil {
+		log.Printf("GetTeamTodos: Error iterating rows: %v", err)
+		return nil, err
+	}
+
+	log.Printf("GetTeamTodos: Found %d todos for team %d", len(todos), teamID)
 	return todos, nil
 }
 

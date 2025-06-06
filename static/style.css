@@ -67,95 +67,151 @@ body {
   flex-direction: column;
 }
 
-/* Navbar Styles */
+/* Navigation Bar Styles */
 .navbar {
-  background-color: var(--surface-color);
+  background: var(--card-background);
   padding: 1rem 2rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: background-color 0.3s ease;
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  color: var(--text-primary);
   text-decoration: none;
 }
 
 .nav-brand i {
-  color: var(--primary-color);
   font-size: 1.5rem;
-  transition: color 0.3s ease;
+  color: var(--primary-color);
 }
 
 .nav-brand h1 {
+  margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  transition: color 0.3s ease;
 }
 
 .nav-actions {
   display: flex;
+  align-items: center;
   gap: 1rem;
-  align-items: center;
 }
 
-.profile-link, .logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  color: var(--text-primary);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.profile-link:hover {
-  background-color: var(--hover-background);
-}
-
-.logout-btn {
-  color: var(--error-color);
-}
-
-.logout-btn:hover {
-  background-color: var(--error-color);
-  color: white;
-}
-
-/* Theme Toggle Button */
 .theme-toggle {
   background: none;
   border: none;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: 0.375rem;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 .theme-toggle:hover {
-  background-color: var(--hover-background);
+  color: var(--text-primary);
+  background: var(--background-hover);
 }
 
-.theme-toggle i {
-  font-size: 1.25rem;
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.profile-link:hover {
+  color: var(--text-primary);
+  background: var(--background-hover);
+}
+
+.profile-link i {
+  font-size: 1.1rem;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--danger-color);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: var(--danger-color);
+  color: white;
+}
+
+/* Container Styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Update existing page header styles to work with navbar */
+.page-header {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Responsive Design for Navigation */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .profile-link, .logout-btn {
+    flex: 1;
+    justify-content: center;
+    min-width: 120px;
+  }
+
+  .theme-toggle {
+    order: -1;
+  }
+
+  .container {
+    padding: 1rem;
+  }
+}
+
+/* Dark theme adjustments for navigation */
+[data-theme="dark"] .navbar {
+  background: var(--card-background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .profile-link:hover,
+[data-theme="dark"] .theme-toggle:hover {
+  background: var(--background-hover);
 }
 
 /* Main Content Styles */
@@ -400,34 +456,6 @@ input.readonly,
 input[readonly] {
   background-color: var(--background-color);
   cursor: not-allowed;
-}
-
-/* Responsive Design */
-@media (max-width: 640px) {
-  .navbar {
-    padding: 1rem;
-  }
-
-  .nav-brand h1 {
-    font-size: 1.25rem;
-  }
-
-  .nav-actions span {
-    display: none;
-  }
-
-  .profile-link, .logout-btn {
-    padding: 0.5rem;
-  }
-
-  .main-content {
-    margin: 1rem auto;
-  }
-
-  .todo-input-container,
-  .todos-container {
-    padding: 1rem;
-  }
 }
 
 /* Animations */
@@ -963,24 +991,29 @@ input[readonly] {
 
 /* Modal styles */
 .modal {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
+  display: none; /* Hide by default */
   justify-content: center;
   align-items: center;
 }
 
 .modal.show {
-  display: flex;
-  animation: fadeIn 0.3s ease-out;
+  display: flex; /* Show when .show class is added */
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .modal-content {
+  position: relative;
   background: var(--card-background);
   border-radius: 12px;
   width: 90%;
@@ -988,26 +1021,24 @@ input[readonly] {
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
-  position: relative;
-  animation: slideIn 0.3s ease-out;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
 }
 
-.modal-lg {
-  max-width: 800px;
+.modal.show .modal-content {
+  transform: translateY(0);
 }
 
 .modal-header {
+  position: sticky;
+  top: 0;
+  background: var(--card-background);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.modal-header h3 {
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  margin: 0;
+  z-index: 1;
 }
 
 .close-btn {
@@ -1018,6 +1049,9 @@ input[readonly] {
   cursor: pointer;
   padding: 0.5rem;
   transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn:hover {
@@ -1025,250 +1059,392 @@ input[readonly] {
 }
 
 .modal-body {
+  padding: 0;
+}
+
+.modal-body .todo-input-container {
+  margin: 0;
+  box-shadow: none;
+  border-radius: 0;
+  background: none;
+}
+
+.modal-body .todo-form {
   padding: 1.5rem;
 }
 
-/* Form styles */
-.form-group {
+.modal-body .form-group {
+  margin-bottom: 1rem;
+}
+
+.modal-body .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.modal-body .input-with-icon input,
+.modal-body .input-with-icon textarea {
+  background-color: var(--input-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  width: 100%;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.modal-body .input-with-icon input:focus,
+.modal-body .input-with-icon textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.modal-body .todo-description {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.modal-body .add-todo-btn {
+  width: 100%;
+  margin-top: 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.modal-body .add-todo-btn:hover {
+  background-color: var(--primary-color-dark);
+}
+
+/* Success message style */
+.error-message.success-message {
+  background-color: var(--success-color);
+}
+
+/* Team Management Styles */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Team Section Styles */
+.team-section {
+  background: var(--card-background);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+  height: auto;
+  overflow: visible;
+}
+
+.team-section.hidden {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+.close-section-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.close-section-btn:hover {
+  color: var(--text-primary);
+}
+
+/* Team Form Styles */
+.team-form {
+  max-width: 500px;
+}
+
+.team-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.team-form label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
   font-weight: 500;
 }
 
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--input-background);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+/* Teams Grid */
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px var(--primary-color-light);
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-/* Todo item styles in team modal */
-.todo-item {
+/* Team Card Styles */
+.team-card {
   background: var(--card-background);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.todo-item:hover {
+.team-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-lg);
+}
+
+.team-info {
+  margin-bottom: 1.5rem;
+}
+
+.team-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+.team-code {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Team Todos Styles */
+.team-todos {
+  margin-bottom: 1.5rem;
+}
+
+.team-todos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.team-todos-header h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* Team Todo Form */
+.team-todo-form {
+  background: var(--background-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.team-todo-form.hidden {
+  display: none;
+}
+
+.team-todo-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.team-todo-form .form-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Todo List Styles */
+.team-todos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.todo-item {
+  background: var(--background-color);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.todo-item:hover {
+  background: var(--background-hover);
 }
 
 .todo-item.completed {
   opacity: 0.7;
 }
 
-.todo-item.completed .todo-content h4 {
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.todo-title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.todo-title.completed-text {
   text-decoration: line-through;
   color: var(--text-secondary);
 }
 
-.todo-content {
-  margin-bottom: 1rem;
-}
-
-.todo-content h4 {
-  font-size: 1.125rem;
-  color: var(--text-primary);
-  margin: 0 0 0.5rem 0;
-}
-
-.todo-content p {
+.todo-description {
   color: var(--text-secondary);
-  margin: 0;
   font-size: 0.875rem;
+  margin: 0.5rem 0;
+  word-break: break-word;
 }
 
 .todo-meta {
-  font-size: 0.75rem;
   color: var(--text-secondary);
-  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  margin: 0.5rem 0 0 0;
 }
 
 .todo-actions {
   display: flex;
-  gap: 0.75rem;
-}
-
-/* Empty state styles */
-.empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--text-secondary);
-}
-
-.empty-state i {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
-.empty-state p {
-  margin: 0;
-}
-
-.empty-state .text-secondary {
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-}
-
-/* Button styles */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+}
+
+.todo-actions button {
+  background: none;
   border: none;
-  outline: none;
-  text-decoration: none;
-  color: white;
-}
-
-.btn i {
-  font-size: 1rem;
-}
-
-.btn-primary {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-color-dark);
-  transform: translateY(-1px);
-}
-
-.btn-secondary {
-  background-color: var(--secondary-color);
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: var(--secondary-color-dark);
-  transform: translateY(-1px);
-}
-
-.btn-success {
-  background-color: var(--success-color);
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: var(--success-color-dark);
-  transform: translateY(-1px);
-}
-
-.btn-danger {
-  background-color: var(--danger-color);
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: var(--danger-color-dark);
-  transform: translateY(-1px);
-}
-
-/* Small buttons */
-.btn-sm {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem;
-}
-
-.btn-sm i {
-  font-size: 0.875rem;
-}
-
-/* Team actions specific styles */
-.team-actions .btn {
-  flex: 1;
-  min-width: 120px;
-}
-
-.teams-actions .btn {
-  min-width: 140px;
-}
-
-/* Footer styles */
-.footer {
-  margin-top: auto;
-  padding: 1.5rem;
-  background-color: var(--surface-color);
-  border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
+  padding: 0.25rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.todo-actions button:hover {
+  color: var(--text-primary);
+}
+
+.complete-btn:hover {
+  color: var(--success-color);
+}
+
+.delete-btn:hover {
+  color: var(--danger-color);
+}
+
+/* Empty State */
+.todo-item.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-secondary);
+}
+
+.todo-item.empty-state i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.todo-item.empty-state p {
+  margin: 0.5rem 0;
+}
+
+.todo-item.empty-state .text-secondary {
   font-size: 0.875rem;
 }
 
-.footer .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
+/* Team Actions */
+.team-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
 }
 
-/* Form controls */
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
+/* Error Message */
+.error-message {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--danger-color);
+  color: white;
+  padding: 1rem 1.5rem;
   border-radius: 8px;
-  background: var(--input-background);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
-.form-control:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px var(--primary-color-light);
+.error-message.hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.error-message.success-message {
+  background: var(--success-color);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+
+  .header-actions {
+    flex-direction: column;
+  }
+
+  .teams-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-todo-form .form-actions {
+    flex-direction: column;
+  }
+
+  .team-todo-form .form-actions button {
+    width: 100%;
   }
 } 
