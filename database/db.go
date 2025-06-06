@@ -66,6 +66,45 @@ func InitDB() error {
 		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 	);`
 
+	// Create teams table
+	createTeamsTable := `
+	CREATE TABLE IF NOT EXISTS teams (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		code TEXT NOT NULL UNIQUE,
+		created_by INTEGER NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+	);`
+
+	// Create team_members table
+	createTeamMembersTable := `
+	CREATE TABLE IF NOT EXISTS team_members (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		team_id INTEGER NOT NULL,
+		user_id INTEGER NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
+		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+		UNIQUE(team_id, user_id)
+	);`
+
+	// Create team_todos table
+	createTeamTodosTable := `
+	CREATE TABLE IF NOT EXISTS team_todos (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		team_id INTEGER NOT NULL,
+		created_by INTEGER NOT NULL,
+		title TEXT NOT NULL,
+		description TEXT,
+		completed BOOLEAN DEFAULT FALSE,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
+		FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+	);`
+
 	_, err = db.Exec(createUsersTable)
 	if err != nil {
 		log.Printf("InitDB: Error creating users table: %v", err)
@@ -79,6 +118,27 @@ func InitDB() error {
 		return err
 	}
 	log.Printf("InitDB: Todos table created")
+
+	_, err = db.Exec(createTeamsTable)
+	if err != nil {
+		log.Printf("InitDB: Error creating teams table: %v", err)
+		return err
+	}
+	log.Printf("InitDB: Teams table created")
+
+	_, err = db.Exec(createTeamMembersTable)
+	if err != nil {
+		log.Printf("InitDB: Error creating team_members table: %v", err)
+		return err
+	}
+	log.Printf("InitDB: Team members table created")
+
+	_, err = db.Exec(createTeamTodosTable)
+	if err != nil {
+		log.Printf("InitDB: Error creating team_todos table: %v", err)
+		return err
+	}
+	log.Printf("InitDB: Team todos table created")
 
 	// Verify foreign key constraints
 	var foreignKeysEnabled int
@@ -307,4 +367,208 @@ func GetTodoByID(userID int64, todoID int64) (models.Todo, error) {
 	}
 	log.Printf("GetTodoByID: Found todo - ID: %d, UserID: %d, Title: %s", todo.ID, todo.UserID, todo.Title)
 	return todo, nil
+}
+
+// Team functions
+func CreateTeam(userID int64, input models.CreateTeamInput) (models.Team, error) {
+	// Generate a random 6-character code
+	code := generateTeamCode()
+	now := time.Now()
+
+	// Начинаем транзакцию
+	tx, err := db.Begin()
+	if err != nil {
+		return models.Team{}, err
+	}
+	defer tx.Rollback() // Откатываем транзакцию в случае ошибки
+
+	// Создаем команду
+	result, err := tx.Exec(
+		"INSERT INTO teams (name, code, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+		input.Name, code, userID, now, now,
+	)
+	if err != nil {
+		return models.Team{}, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return models.Team{}, err
+	}
+
+	// Добавляем создателя как члена команды
+	_, err = tx.Exec(
+		"INSERT INTO team_members (team_id, user_id, created_at) VALUES (?, ?, ?)",
+		id, userID, now,
+	)
+	if err != nil {
+		return models.Team{}, err
+	}
+
+	// Подтверждаем транзакцию
+	if err := tx.Commit(); err != nil {
+		return models.Team{}, err
+	}
+
+	return models.Team{
+		ID:        id,
+		Name:      input.Name,
+		Code:      code,
+		CreatedBy: userID,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}, nil
+}
+
+func JoinTeam(userID int64, code string) (models.Team, error) {
+	var team models.Team
+	err := db.QueryRow(
+		"SELECT id, name, code, created_by, created_at, updated_at FROM teams WHERE code = ?",
+		code,
+	).Scan(&team.ID, &team.Name, &team.Code, &team.CreatedBy, &team.CreatedAt, &team.UpdatedAt)
+	if err != nil {
+		return models.Team{}, err
+	}
+
+	// Check if user is already a member
+	var exists bool
+	err = db.QueryRow(
+		"SELECT EXISTS(SELECT 1 FROM team_members WHERE team_id = ? AND user_id = ?)",
+		team.ID, userID,
+	).Scan(&exists)
+	if err != nil {
+		return models.Team{}, err
+	}
+	if exists {
+		return team, nil
+	}
+
+	// Add user as team member
+	_, err = db.Exec(
+		"INSERT INTO team_members (team_id, user_id, created_at) VALUES (?, ?, ?)",
+		team.ID, userID, time.Now(),
+	)
+	if err != nil {
+		return models.Team{}, err
+	}
+
+	return team, nil
+}
+
+func GetUserTeams(userID int64) ([]models.Team, error) {
+	rows, err := db.Query(`
+		SELECT DISTINCT t.id, t.name, t.code, t.created_by, t.created_at, t.updated_at 
+		FROM teams t
+		LEFT JOIN team_members tm ON t.id = tm.team_id
+		WHERE tm.user_id = ? OR t.created_by = ?
+		ORDER BY t.created_at DESC`,
+		userID, userID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var teams []models.Team
+	for rows.Next() {
+		var team models.Team
+		err := rows.Scan(&team.ID, &team.Name, &team.Code, &team.CreatedBy, &team.CreatedAt, &team.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		teams = append(teams, team)
+	}
+
+	return teams, nil
+}
+
+func GetTeamTodos(teamID int64) ([]models.TeamTodo, error) {
+	rows, err := db.Query(`
+		SELECT id, team_id, created_by, title, description, completed, created_at, updated_at 
+		FROM team_todos 
+		WHERE team_id = ? 
+		ORDER BY created_at DESC`,
+		teamID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var todos []models.TeamTodo
+	for rows.Next() {
+		var todo models.TeamTodo
+		err := rows.Scan(&todo.ID, &todo.TeamID, &todo.CreatedBy, &todo.Title, &todo.Description, &todo.Completed, &todo.CreatedAt, &todo.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		todos = append(todos, todo)
+	}
+
+	return todos, nil
+}
+
+func CreateTeamTodo(teamID int64, userID int64, input models.CreateTeamTodoInput) (models.TeamTodo, error) {
+	now := time.Now()
+
+	result, err := db.Exec(
+		"INSERT INTO team_todos (team_id, created_by, title, description, completed, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		teamID, userID, input.Title, input.Description, false, now, now,
+	)
+	if err != nil {
+		return models.TeamTodo{}, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return models.TeamTodo{}, err
+	}
+
+	return models.TeamTodo{
+		ID:          id,
+		TeamID:      teamID,
+		CreatedBy:   userID,
+		Title:       input.Title,
+		Description: input.Description,
+		Completed:   false,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}, nil
+}
+
+func UpdateTeamTodo(teamID int64, todoID int64, input models.UpdateTeamTodoInput) error {
+	_, err := db.Exec(
+		"UPDATE team_todos SET title = ?, description = ?, completed = ?, updated_at = ? WHERE id = ? AND team_id = ?",
+		input.Title, input.Description, input.Completed, time.Now(), todoID, teamID,
+	)
+	return err
+}
+
+func DeleteTeamTodo(teamID int64, todoID int64) error {
+	_, err := db.Exec("DELETE FROM team_todos WHERE id = ? AND team_id = ?", todoID, teamID)
+	return err
+}
+
+// Helper function to generate a random team code
+func generateTeamCode() string {
+	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	const length = 6
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[time.Now().UnixNano()%int64(len(charset))]
+		time.Sleep(time.Nanosecond) // Ensure different characters
+	}
+	return string(b)
+}
+
+func GetTeamByID(teamID int64, team *models.Team) error {
+	return db.QueryRow(
+		"SELECT id, name, code, created_by, created_at FROM teams WHERE id = ?",
+		teamID,
+	).Scan(&team.ID, &team.Name, &team.Code, &team.CreatedBy, &team.CreatedAt)
+}
+
+func DeleteTeam(teamID int64) error {
+	_, err := db.Exec("DELETE FROM teams WHERE id = ?", teamID)
+	return err
 }

@@ -64,6 +64,18 @@ func main() {
 		api.PUT("/todos/:id", handlers.UpdateTodo)
 		api.PUT("/todos/:id/toggle", handlers.ToggleTodo)
 		api.DELETE("/todos/:id", handlers.DeleteTodo)
+
+		// Team routes
+		teamRoutes := api.Group("/teams")
+		teamRoutes.GET("/", handlers.GetTeamsPage)
+		teamRoutes.GET("/list", handlers.GetTeams)
+		teamRoutes.POST("/", handlers.CreateTeam)
+		teamRoutes.POST("/join", handlers.JoinTeam)
+		teamRoutes.GET("/:id/todos", handlers.GetTeamTodos)
+		teamRoutes.POST("/:id/todos", handlers.CreateTeamTodo)
+		teamRoutes.PUT("/:id/todos/:todoId", handlers.UpdateTeamTodo)
+		teamRoutes.DELETE("/:id/todos/:todoId", handlers.DeleteTeamTodo)
+		teamRoutes.DELETE("/:id", handlers.DeleteTeam)
 	}
 
 	// Protected pages
@@ -80,6 +92,7 @@ func main() {
 				"title": "My Todos",
 			})
 		})
+		protected.GET("/teams", handlers.GetTeamsPage)
 	}
 
 	// Start server

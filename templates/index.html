@@ -1,86 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="A beautiful and modern todo list application"
-    />
-    <title data-i18n="app.title">Todo List</title>
-    <link rel="stylesheet" href="/static/style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-  </head>
-  <body>
-    <div class="app-container">
-      <nav class="navbar">
-        <div class="nav-brand">
-          <i class="fas fa-check-double"></i>
-          <h1 data-i18n="app.title">Todo List</h1>
-        </div>
-        <div class="nav-actions">
-          <a href="/profile" class="profile-link">
-            <i class="fas fa-user"></i>
-            <span data-i18n="nav.profile">Profile</span>
-          </a>
-          <button onclick="logout()" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
-            <span data-i18n="nav.logout">Logout</span>
-          </button>
-        </div>
-      </nav>
+{{template "header" .}}
 
-      <main class="main-content">
-        <div id="error-message" class="error-message hidden"></div>
+<div class="app-container">
+  <main class="main-content">
+    <div id="error-message" class="error-message hidden"></div>
 
-        <div class="todo-input-container">
-          <form id="new-todo-form" class="todo-form">
-            <div class="form-group">
-              <input
-                type="text"
-                id="new-todo"
-                data-i18n-placeholder="todos.todoPlaceholder"
-                placeholder="What needs to be done?"
-                required
-                class="todo-input"
-              />
-            </div>
-            <div class="form-group">
-              <textarea
-                id="new-todo-description"
-                data-i18n-placeholder="todos.descriptionPlaceholder"
-                placeholder="Add a description (optional)"
-                class="todo-description"
-              ></textarea>
-            </div>
-            <button type="submit" class="add-todo-btn">
-              <i class="fas fa-plus"></i>
-              <span data-i18n="todos.addTodo">Add Todo</span>
-            </button>
-          </form>
-        </div>
-
-        <div class="todos-container">
-          <h2 class="todos-title" data-i18n="todos.title">Your Tasks</h2>
-          <div id="todos-list" class="todos-list">
-            <!-- Todos will be inserted here by JavaScript -->
+    <div class="todo-input-container">
+      <h2 class="todos-title">Add New Todo</h2>
+      <form id="new-todo-form" class="todo-form">
+        <div class="form-group">
+          <label for="new-todo">Title</label>
+          <div class="input-with-icon">
+            <i class="fas fa-pencil-alt"></i>
+            <input
+              type="text"
+              id="new-todo"
+              name="title"
+              placeholder="What needs to be done?"
+              required
+            />
           </div>
         </div>
-      </main>
+        <div class="form-group">
+          <label for="new-todo-description">Description</label>
+          <div class="input-with-icon">
+            <i class="fas fa-align-left"></i>
+            <textarea
+              id="new-todo-description"
+              name="description"
+              placeholder="Add a description (optional)"
+              class="todo-description"
+            ></textarea>
+          </div>
+        </div>
+        <button type="submit" class="add-todo-btn">
+          <i class="fas fa-plus"></i>
+          <span>Add Todo</span>
+        </button>
+      </form>
     </div>
 
-    <script src="/static/i18n.js"></script>
-    <script src="/static/theme.js"></script>
-    <script src="/static/todos.js"></script>
-  </body>
-</html>
+    <div class="todos-container">
+      <h2 class="todos-title">Your Tasks</h2>
+      <div id="todos-list" class="todos-list">
+        <!-- Todos will be dynamically added here -->
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Load todos
+  async function loadTodos() {
+    try {
+      const response = await fetch("/api/todos");
+      if (!response.ok) throw new Error("Failed to load todos");
+
+      const todos = await response.json();
+      const todosList = document.getElementById("todos-list");
+      todosList.innerHTML = "";
+
+      if (todos.length === 0) {
+        todosList.innerHTML = `
+          <div class="todo-item empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <p>No todos yet</p>
+            <p class="text-secondary">Add your first todo!</p>
+          </div>
+        `;
+        return;
+      }
+
+      todos.forEach((todo) => {
+        const todoElement = createTodoElement(todo);
+        todosList.appendChild(todoElement);
+      });
+    } catch (error) {
+      showError(error.message);
+    }
+  }
+
+  // Create todo element
+  function createTodoElement(todo) {
+    const div = document.createElement("div");
+    div.className = `todo-item ${todo.completed ? "completed" : ""}`;
+    div.innerHTML = `
+      <div class="todo-header">
+        <h3 class="todo-title ${todo.completed ? "completed-text" : ""}">${
+      todo.title
+    }</h3>
+        <div class="todo-actions">
+          <button class="complete-btn" aria-label="Mark as complete">
+            <i class="fas ${todo.completed ? "fa-undo" : "fa-check"}"></i>
+          </button>
+          <button class="delete-btn" aria-label="Delete todo">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      ${
+        todo.description
+          ? `<p class="todo-description">${todo.description}</p>`
+          : ""
+      }
+    `;
+
+    // Add event listeners
+    const completeBtn = div.querySelector(".complete-btn");
+    const deleteBtn = div.querySelector(".delete-btn");
+
+    completeBtn.addEventListener("click", async () => {
+      try {
+        const response = await fetch(`/api/todos/${todo.id}/toggle`, {
+          method: "PUT",
+        });
+        if (!response.ok) throw new Error("Failed to toggle todo");
+        loadTodos();
+      } catch (error) {
+        showError(error.message);
+      }
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to delete this todo?")) return;
+      try {
+        const response = await fetch(`/api/todos/${todo.id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) throw new Error("Failed to delete todo");
+        loadTodos();
+      } catch (error) {
+        showError(error.message);
+      }
+    });
+
+    return div;
+  }
+
+  // Add new todo
+  document
+    .getElementById("new-todo-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = document.getElementById("new-todo").value;
+      const description = document.getElementById("new-todo-description").value;
+
+      try {
+        const response = await fetch("/api/todos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title, description }),
+        });
+
+        if (!response.ok) throw new Error("Failed to add todo");
+
+        document.getElementById("new-todo").value = "";
+        document.getElementById("new-todo-description").value = "";
+        loadTodos();
+      } catch (error) {
+        showError(error.message);
+      }
+    });
+
+  // Show error message
+  function showError(message) {
+    const errorDiv = document.getElementById("error-message");
+    errorDiv.textContent = message;
+    errorDiv.classList.remove("hidden");
+    setTimeout(() => {
+      errorDiv.classList.add("hidden");
+    }, 5000);
+  }
+
+  // Load todos on page load
+  document.addEventListener("DOMContentLoaded", loadTodos);
+</script>
+
+{{template "footer" .}}

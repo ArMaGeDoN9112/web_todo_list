@@ -1,110 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Login to your Todo List account" />
-    <title data-i18n="auth.login">Login - Todo List</title>
-    <link rel="stylesheet" href="/static/style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-  </head>
-  <body>
-    <div class="app-container">
-      <nav class="navbar">
-        <div class="nav-brand">
-          <i class="fas fa-check-double"></i>
-          <h1 data-i18n="app.title">Todo List</h1>
+{{template "header" .}}
+
+<div class="app-container">
+  <main class="main-content">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2>Login</h2>
+          <p class="auth-subtitle">Already have an account?</p>
         </div>
-        <div class="nav-actions">
-          <!-- Language switcher will be inserted here -->
-        </div>
-      </nav>
 
-      <main class="main-content">
-        <div class="auth-container">
-          <div class="auth-card">
-            <div class="auth-header">
-              <h2 data-i18n="auth.login">Login</h2>
-              <p class="auth-subtitle" data-i18n="auth.hasAccount">
-                Already have an account?
-              </p>
-            </div>
+        <div id="error-message" class="error-message hidden"></div>
 
-            <div id="error-message" class="error-message hidden"></div>
-
-            <form id="login-form" class="auth-form" onsubmit="return false;">
-              <div class="form-group">
-                <label for="username" data-i18n="auth.username">Username</label>
-                <div class="input-with-icon">
-                  <i class="fas fa-user"></i>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    data-i18n-placeholder="auth.username"
-                    placeholder="Enter your username"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="password" data-i18n="auth.password">Password</label>
-                <div class="input-with-icon">
-                  <i class="fas fa-lock"></i>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    data-i18n-placeholder="auth.password"
-                    placeholder="Enter your password"
-                    required
-                    minlength="6"
-                  />
-                  <button
-                    type="button"
-                    class="password-toggle"
-                    aria-label="Toggle password visibility"
-                  >
-                    <i class="fas fa-eye"></i>
-                  </button>
-                </div>
-                <div class="password-requirements">
-                  <small data-i18n="auth.passwordRequirements"
-                    >Password must be at least 6 characters long</small
-                  >
-                </div>
-              </div>
-
-              <button type="submit" class="auth-button" id="login-button">
-                <i class="fas fa-sign-in-alt"></i>
-                <span data-i18n="auth.signIn">Sign In</span>
-              </button>
-            </form>
-
-            <div class="auth-footer">
-              <p data-i18n="auth.noAccount">Don't have an account?</p>
-              <a href="/register" class="auth-link" data-i18n="auth.signUp"
-                >Sign Up</a
-              >
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-with-icon">
+              <i class="fas fa-user"></i>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                required
+              />
             </div>
           </div>
-        </div>
-      </main>
-    </div>
 
-    <script src="/static/i18n.js"></script>
-    <script src="/static/theme.js"></script>
-    <script src="/static/auth.js"></script>
-  </body>
-</html>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock"></i>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+                minlength="6"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                aria-label="Toggle password visibility"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div class="password-requirements">
+              <small>Password must be at least 6 characters long</small>
+            </div>
+          </div>
+
+          <button type="submit" class="auth-button" id="login-button">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Don't have an account?</p>
+          <a href="/register" class="auth-link">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  document
+    .getElementById("login-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) throw new Error("Invalid username or password");
+
+        window.location.href = "/todos";
+      } catch (error) {
+        const errorDiv = document.getElementById("error-message");
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove("hidden");
+      }
+    });
+
+  // Toggle password visibility
+  document
+    .querySelector(".password-toggle")
+    .addEventListener("click", function () {
+      const passwordInput = document.getElementById("password");
+      const icon = this.querySelector("i");
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    });
+</script>
+
+{{template "footer" .}}
